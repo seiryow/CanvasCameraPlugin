@@ -13,7 +13,20 @@
 #import <AVFoundation/AVFoundation.h>
 #import <ImageIO/ImageIO.h>
 #import <AssetsLibrary/AssetsLibrary.h>
+#import <Foundation/Foundation.h>
+#include <vector>
+#include <map>
 
+@interface UIImage (OpenCV)
+
+-(cv::Mat) toMat;
+
++(UIImage*) imageWithMat:(const cv::Mat&) image andImageOrientation: (UIImageOrientation) orientation;
++(UIImage*) imageWithMat:(const cv::Mat&) image andDeviceOrientation: (UIDeviceOrientation) orientation;
+
+- (UIImage *)thumbnailWithSize:(int)thumbSize;
+
+@end
 @interface CanvasCamera : CDVPlugin <AVCaptureVideoDataOutputSampleBufferDelegate>
 
 @property (nonatomic, strong) AVCaptureSession *session;

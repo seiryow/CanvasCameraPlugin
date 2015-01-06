@@ -1,15 +1,17 @@
+cordova.define("com.keith.cordova.plugin.canvascamera.CanvasCamera", function(require, exports, module) { //
+// CanvasCamera.js
+// PhoneGap iOS Cordova Plugin to capture Camera streaming into a HTML5 Canvas
+// or an IMG tag.
 //
-//  CanvasCamera.js
-//  PhoneGap iOS Cordova Plugin to capture Camera streaming into a HTML5 Canvas or an IMG tag.
+// Created by Diego Araos <d@wehack.it> on 12/29/12.
 //
-//  Created by Diego Araos <d@wehack.it> on 12/29/12.
-//
-//  MIT License
+// MIT License
 
 cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module) {
     var exec = require('cordova/exec');
     var CanvasCamera = function(){
         var _orientation = 'landscape';
+                _orientation = 'portrait';
         var _obj = null;
         var _context = null;
         var _camImage = null;
@@ -18,58 +20,104 @@ cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module)
         var _y = 0;
         var _width = 0;
         var _height = 0;
+        var descslist=[];
+        var test="abc";
     };
 
 
 
-
-    CanvasCamera.prototype.initialize = function(obj) {
+    CanvasCamera.prototype.initialize = function(obob) {
         var _this = this;
-        this._obj = obj;
+// this._obj = obj;
 
-        this._context = obj.getContext("2d");
-
-        this._camImage = new Image();
-
+// this._context = obj.getContext("2d");
+               
+               this._camImage = new Image();
+               obob.style["-webkit-transform"]="rotate(90deg)";
+// obob.style.width="124%";
+// obob.style["margin"]="0 0 0 -12%";
+               this.obob = obob;
+// this.dbg = dbg;
+// obob=this._camImage;
         this._camImage.onload = function() {
-            _this._context.clearRect(0, 0, _this._width, _this._height);
-            if (window.orientation == 90
-               || window.orientation == -90)
-            {
-                _this._context.save();
-                // rotate 90
-                _this._context.translate(_this._width/2, _this._height/2);
-                _this._context.rotate((90 - window.orientation) *Math.PI/180);
-                _this._context.drawImage(_this._camImage, 0, 0, 352, 288, -_this._width/2, -_this._height/2, _this._width, _this._height);
-                //
-                _this._context.restore();
-            }
-            else
-            {
-                _this._context.save();
-                // rotate 90
-                _this._context.translate(_this._width/2, _this._height/2);
-                _this._context.rotate((90 - window.orientation)*Math.PI/180);
-                _this._context.drawImage(_this._camImage, 0, 0, 352, 288, -_this._height/2, -_this._width/2, _this._height, _this._width);
-                //
-                _this._context.restore();
-            }
+// _this._context.clearRect(0, 0, _this._width, _this._height);
+// _this._context.save();
+// console.log(444);
+               // rotate 90
+// _this._context.translate(_this._width/2, _this._height/2);
+               // _this._context.rotate((90 - window.orientation)*Math.PI/180);
+               // _this._context.drawImage(_this._camImage, 0, 0, 352, 288,
+				// -_this._height/2, -_this._width/2, _this._height,
+				// _this._width);
+               // _this.obob=_this._camImage;
+               _this.obob.src=_this._camImage.src;
+// _this.dbg.innerHTML=_this._camImage.src;
+// debugimg2 = document.getElementById("debugimg2");
+//  debugimg2.src=this._camImage.src;
+
+// _this._context.drawImage(_this._camImage, 0, 0);
+               //
+// _this._context.restore();
         };
 
         // register orientation change event
-        window.addEventListener('orientationchange', this.doOrientationChange);
-        this.doOrientationChange();
+// window.addEventListener('orientationchange', this.doOrientationChange);
+// this.doOrientationChange();
     };
 
 
     CanvasCamera.prototype.start = function(options) {
         cordova.exec(false, false, "CanvasCamera", "startCapture", [options]);
+               this.descs=[];
+// setTimeout(function(){
+// cordova.exec(onsuccess, function(){}, "CanvasCamera", "captureImage", []);
+//                          
+// },1000)
+               
     };
-
-
-
-    CanvasCamera.prototype.capture = function(data) {
-        this._camImage.src = data;
+               var flg=false;
+    CanvasCamera.prototype.stopCapture = function() {
+// alert(3);
+               cordova.exec(function(){}, false, "CanvasCamera", "stopCapture", [0]);
+    };
+               
+    CanvasCamera.prototype.capture = function(data,detect) {
+               this._camImage.src = data;
+               if(!flg){
+// alert(this.test);
+// al();
+               flg=true;
+               }
+               // console.log(data);
+               };
+               
+               var max=0;
+               
+               var cnt=0;
+               var cnt=0;
+    var descslist=[];
+               
+               CanvasCamera.prototype.getdescslist = function() {
+               console.log("getdescslist ". "abc");
+// console.log(descslist[0]);
+// return descslist[0];
+               foo("abc") ;
+               }
+    CanvasCamera.prototype.detect = function(data) {
+// console.log(data.length);s
+// alert(data);
+// if(max<data.length){
+// max=data.length;
+// }
+               descslist[cnt]=data;
+               cnt++;
+               if(cnt==101){
+               console.log(data);
+// hist();
+               cnt=0;
+               
+// max=0;
+               }
     };
 
     CanvasCamera.prototype.setFlashMode = function(flashMode) {
@@ -79,7 +127,10 @@ cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module)
     CanvasCamera.prototype.setCameraPosition = function(cameraPosition) {
         cordova.exec(function(){}, function(){}, "CanvasCamera", "setCameraPosition", [cameraPosition]);
     };
-
+               
+    CanvasCamera.prototype.take = function() {
+               cordova.exec(function(){}, function(){}, "CanvasCamera", "setCameraPosition", [cameraPosition]);
+    };
     CanvasCamera.prototype.doOrientationChange = function() {
         switch(window.orientation)
         {
@@ -94,14 +145,16 @@ cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module)
 
         var windowWidth = window.innerWidth;
         var windowHeight = window.innerHeight;
-        var pixelRatio = window.devicePixelRatio || 1; /// get pixel ratio of device
+        var pixelRatio = window.devicePixelRatio || 1; // / get pixel ratio of
+														// device
 
 
-        this._obj.width = windowWidth;// * pixelRatio;   /// resolution of canvas
+        this._obj.width = windowWidth;// * pixelRatio; /// resolution of
+										// canvas
         this._obj.height = windowHeight;// * pixelRatio;
 
 
-        this._obj.style.width = windowWidth + 'px';   /// CSS size of canvas
+        this._obj.style.width = windowWidth + 'px';   // / CSS size of canvas
         this._obj.style.height = windowHeight + 'px';
 
 
@@ -121,7 +174,7 @@ cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module)
 
 var CanvasCamera = cordova.require("cordova/plugin/CanvasCamera");
 
-
+alert(432);
 var DestinationType = {
     DATA_URL : 0,
     FILE_URI : 1
@@ -159,5 +212,11 @@ CanvasCamera.PictureSourceType = PictureSourceType;
 CanvasCamera.EncodingType = EncodingType;
 CanvasCamera.CameraPosition = CameraPosition;
 CanvasCamera.FlashMode = FlashMode;
+               
 
+// cordova.exec(function(){}, function(){}, "CanvasCamera", "setCentroid",
+// [centroid[0][0]);
+               
+cordova.exec(function(){}, function(){}, "CanvasCamera", "setCentroid", [123]);
 module.exports = CanvasCamera;
+});
