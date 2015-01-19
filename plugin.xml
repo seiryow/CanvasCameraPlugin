@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-        id="com.keith.cordova.plugin.canvascamera"
+        id="com.utsukemob.cordova.plugin.canvascamera"
         version="1.0.0dev">
 
     <name>CanvasCamera</name>
 
     <description>The purpose of the plugin is to create an platform independent javascript interface for Cordova based mobile applications to preview camera and to take picture.</description>
-    <repo>https://github.com/donaldp24/CanvasCameraPlugin.git</repo>
+    <repo>https://github.com/seiryow/CanvasCameraPlugin.git</repo>
     <keywords>camera, canvas camera, take photos</keywords>
     <license>Apache 2.0</license>
 
@@ -32,8 +32,8 @@
         </config-file>
 
         <!-- plugin header and source files -->
-        <header-file src="src/ios/CanvasCamera.h" />
-        <source-file src="src/ios/CanvasCamera.m" />
+        <header-file src="src/ios/CanvasCamera.hpp” />
+        <source-file src="src/ios/CanvasCamera.mm” />
 
         <!-- system frameworks -->
         <framework src="AssetsLibrary.framework" weak="true" />
@@ -49,13 +49,13 @@
     <platform name="android">
         <config-file target="res/xml/config.xml" parent="/*">
             <feature name="CanvasCamera">
-                <param name="android-package" value="com.keith.canvascameraplugin.CanvasCamera"/>
+                <param name="android-package" value="com.utsukemob.canvascameraplugin.CanvasCamera"/>
             </feature>
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest/application">
 	        <activity
-	                android:name="com.keith.canvascameraplugin.CanvasCameraView"
+	                android:name="com.utsukemob.canvascameraplugin.CanvasCameraView"
 	                android:label="@string/app_name"
 	                android:theme="@android:style/Theme.Black.NoTitleBar">
 	        </activity>
