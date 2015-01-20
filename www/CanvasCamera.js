@@ -1,5 +1,4 @@
 
-// CanvasCamera.js
 // PhoneGap iOS Cordova Plugin to capture Camera streaming into a HTML5 Canvas
 // or an IMG tag.
 //
