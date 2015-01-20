@@ -4,7 +4,7 @@
 // or an IMG tag.
 //
 // Created by Diego Araos <d@wehack.it> on 12/29/12.
-//dd
+//
 // MIT License
 
 cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module) {
@@ -124,7 +124,7 @@ cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module)
         cordova.exec(function(){}, function(){}, "CanvasCamera", "setFlashMode", [flashMode]);
     };
     CanvasCamera.prototype.setDeepMode = function(deepMode) {
-        cordova.exec(function(){}, function(){}, "CanvasCamera", "setDeepMode", [flashMode]);
+        cordova.exec(function(){}, function(){}, "CanvasCamera", "setDeepMode", [deepMode]);
     };
 
     CanvasCamera.prototype.setCameraPosition = function(cameraPosition) {
