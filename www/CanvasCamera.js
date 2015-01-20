@@ -1,4 +1,4 @@
-cordova.define("com.keith.cordova.plugin.canvascamera.CanvasCamera", function(require, exports, module) { //
+
 // CanvasCamera.js
 // PhoneGap iOS Cordova Plugin to capture Camera streaming into a HTML5 Canvas
 // or an IMG tag.
@@ -123,6 +123,9 @@ cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module)
     CanvasCamera.prototype.setFlashMode = function(flashMode) {
         cordova.exec(function(){}, function(){}, "CanvasCamera", "setFlashMode", [flashMode]);
     };
+    CanvasCamera.prototype.setDeepMode = function(deepMode) {
+        cordova.exec(function(){}, function(){}, "CanvasCamera", "setDeepMode", [flashMode]);
+    };
 
     CanvasCamera.prototype.setCameraPosition = function(cameraPosition) {
         cordova.exec(function(){}, function(){}, "CanvasCamera", "setCameraPosition", [cameraPosition]);
@@ -206,12 +209,18 @@ var FlashMode = {
     ON : 1,
     AUTO : 2
 };
+var DeepMode = {
+    OFF : 0,
+    ON : 1,
+    AUTO : 2
+};
 
 CanvasCamera.DestinationType = DestinationType;
 CanvasCamera.PictureSourceType = PictureSourceType;
 CanvasCamera.EncodingType = EncodingType;
 CanvasCamera.CameraPosition = CameraPosition;
 CanvasCamera.FlashMode = FlashMode;
+CanvasCamera.DeepMode = DeepMode;
                
 
 // cordova.exec(function(){}, function(){}, "CanvasCamera", "setCentroid",
@@ -219,4 +228,3 @@ CanvasCamera.FlashMode = FlashMode;
                
 cordova.exec(function(){}, function(){}, "CanvasCamera", "setCentroid", [123]);
 module.exports = CanvasCamera;
-});
