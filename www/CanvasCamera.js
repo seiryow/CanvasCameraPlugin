@@ -4,7 +4,7 @@
 // or an IMG tag.
 //
 // Created by Diego Araos <d@wehack.it> on 12/29/12.
-//
+//dd
 // MIT License
 
 cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module) {
