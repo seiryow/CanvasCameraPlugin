@@ -13,6 +13,7 @@
                               var _height = 0;
                               var descslist=[];
                               var test="abc";
+                              var b64="abc";
                               };
                               
                               
@@ -103,13 +104,25 @@
                               descslist[cnt]=data;
                               cnt++;
                               if(cnt==101){
-                              console.log(data);
+                              //console.log(data);
                               // hist();
                               cnt=0;
                               
                               // max=0;
                               }
                               };
+                              
+                              
+                              CanvasCamera.prototype.base64 = function(data) {
+                              this.b64=data;
+                              };
+                              
+                              CanvasCamera.prototype.gb64 = function() {
+                              //                              console.log(this.b64);
+                              return this.b64  ;
+                              };
+                              
+                              
                               
                               CanvasCamera.prototype.setFlashMode = function(flashMode) {
                               cordova.exec(function(){}, function(){}, "CanvasCamera", "setFlashMode", [flashMode]);

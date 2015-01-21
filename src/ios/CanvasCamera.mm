@@ -46,6 +46,7 @@ typedef enum {
     
     // parameters
     AVCaptureFlashMode          _flashMode;
+    int          _deepMode;
     AVCaptureDevicePosition     _devicePosition;
     
     // options
@@ -297,7 +298,6 @@ typedef enum {
 
 - (void)setFlashMode:(CDVInvokedUrlCommand *)command
 {
-    
     CDVPluginResult *pluginResult = nil;
     NSString *resultJS = nil;
     
@@ -360,6 +360,65 @@ typedef enum {
                 bSuccess = NO;
                 errMsg = @"This device has no flash or torch";
             }
+        }
+        else
+        {
+            bSuccess = NO;
+            errMsg = @"Session is not started";
+        }
+        
+        if (bSuccess)
+        {
+            // success callback
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:@""];
+            resultJS = [pluginResult toSuccessCallbackString:command.callbackId];
+            [self writeJavascript:resultJS];
+        }
+        else
+        {
+            pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errMsg];
+            resultJS = [pluginResult toErrorCallbackString:command.callbackId];
+            [self writeJavascript:resultJS];
+        }
+    }
+    else
+    {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:errMsg];
+        resultJS = [pluginResult toErrorCallbackString:command.callbackId];
+        [self writeJavascript:resultJS];
+    }
+}
+
+
+- (void)setDeepMode:(CDVInvokedUrlCommand *)command
+{
+    
+    CDVPluginResult *pluginResult = nil;
+    NSString *resultJS = nil;
+    
+    NSString *errMsg = @"";
+    BOOL bParsed = NO;
+    if (command.arguments.count <= 0)
+    {
+        bParsed = NO;
+        errMsg = @"Please specify a flash mode";
+    }
+    else
+    {
+        NSString *strDeepMode = [command.arguments objectAtIndex:0];
+        int deepMode = [strDeepMode integerValue];
+        _deepMode = deepMode;
+        bParsed = YES;
+    }
+    
+    
+    if (bParsed)
+    {
+        BOOL bSuccess = NO;
+        // check session is started
+        if (bIsStarted && self.session)
+        {
+            bSuccess = YES;
         }
         else
         {
@@ -694,7 +753,10 @@ NSInteger itr=0;
         //image = [CanvasCamera resizeImage:image toSize:CGSizeMake(width/10, height/10)];
         //        image = [CanvasCamera resizeImage:image toSize:CGSizeMake(width, height)];
         
-        image = [CanvasCamera resizeImage:image toSize:CGSizeMake(width/4, height/4)];
+                image = [CanvasCamera resizeImage:image toSize:CGSizeMake(width, height)];
+//                image = [CanvasCamera resizeImage:image toSize:CGSizeMake(width/2, height/2)];
+        
+        //        image = [CanvasCamera resizeImage:image toSize:CGSizeMake(width/4, height/4)];
         
         itr++;
 //                NSLog(@"%d",itr);
@@ -709,6 +771,86 @@ NSInteger itr=0;
          gray_img=src_img;
 //        cv::transform(src_img, gray_img, 50);
         cvtColor(src_img, gray_img, cv::COLOR_BGR2GRAY);
+        
+        
+        cv::Mat edges;
+        cv::Mat outputFrame;
+//        , m_harrisBlockSize(2)
+//        , m_harrisapertureSize(3)
+//        , m_harrisK(0.04f)
+//        , m_harrisThreshold(200)
+//                int m_cannyLoThreshold=250;
+//                int m_cannyHiThreshold=250;
+//                int m_cannyAperture=1;
+//        cv::Canny(gray_img, edges, m_cannyLoThreshold, m_cannyHiThreshold, m_cannyAperture * 2 + 1);
+        
+        int scale = 1;
+        int delta = 0;
+        int ddepth = CV_16S;
+        
+        cv::Mat grad_x, grad_y;
+        cv::Mat abs_grad_x, abs_grad_y;
+        
+        if(_deepMode==0){
+        /// Gradient X
+        cv::Sobel( gray_img, grad_x, ddepth, 1, 0, 3, scale, delta, cv::BORDER_DEFAULT );
+        cv::convertScaleAbs( grad_x, abs_grad_x );
+        
+        /// Gradient Y
+        cv::Sobel( gray_img, grad_y, ddepth, 0, 1, 3, scale, delta, cv::BORDER_DEFAULT );
+        cv::convertScaleAbs( grad_y, abs_grad_y );
+        
+        /// Total Gradient (approximate)
+        cv::addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, edges );
+        
+        }else{
+            
+            int scale = 1;
+            int delta = 0;
+            int ddepth = CV_16S;
+            
+            /// Gradient X
+            cv::Scharr( gray_img, grad_x, ddepth, 1, 0, scale, delta, cv::BORDER_DEFAULT );
+            cv::convertScaleAbs( grad_x, abs_grad_x );
+            
+            /// Gradient Y
+            cv::Scharr( gray_img, grad_y, ddepth, 0, 1, scale, delta, cv::BORDER_DEFAULT );
+            cv::convertScaleAbs( grad_y, abs_grad_y );
+            
+            /// Total Gradient (approximate)
+            cv::addWeighted( abs_grad_x, 0.5, abs_grad_y, 0.5, 0, edges );
+        }
+        edges= ~edges;
+        cv::cvtColor(edges, outputFrame, cv::COLOR_GRAY2BGRA);
+        gray_img=outputFrame;
+        
+        
+//        cv::Mat grayImage;
+//        cv::Mat edges;
+//    
+//        cv::Mat grad_x, grad_y;
+//        cv::Mat abs_grad_x, abs_grad_y;
+//        
+//        cv::Mat dst;
+//        cv::Mat dst_norm, dst_norm_scaled;
+//        
+//        bool m_showOnlyEdges;
+//        std::string m_algorithmName;
+//        
+//        // Canny detector options:
+//        int m_cannyLoThreshold;
+//        int m_cannyHiThreshold;
+//        int m_cannyAperture;
+//        
+//        // Harris detector options:
+//        int m_harrisBlockSize;
+//        int m_harrisapertureSize;
+//        double m_harrisK;
+//        int m_harrisThreshold;
+        
+        
+        
+        
 //        cv::cvtColor(src_img, gray_img, cv::COLOR_BGRA2RGBA);
         std::vector<cv::KeyPoint> objectKeypoints;
         std::vector<cv::KeyPoint> keypoints;
@@ -759,7 +901,14 @@ NSInteger itr=0;
 //        UIImage *image2 = [UIImage imageWithMat:gray_img andImageOrientation:0];
         
         cv::Mat cvMat=gray_img;
+        
+        
+        
         NSData *data = [NSData dataWithBytes:cvMat.data length:cvMat.elemSize()*cvMat.total()];
+        NSMutableString * str2 = [NSMutableString string];
+
+        /*
+         */
 //        uchar
         unsigned char *buffer =descriptors.data;
 //        uchar arr2[];
@@ -776,8 +925,7 @@ NSInteger itr=0;
             [str appendFormat:@"%i ", i[j]];
         }
         NSInteger sum=0;
-        NSMutableString * str2 = [NSMutableString string];
-//        for (int j = 0; j<len; j++) {
+         //        for (int j = 0; j<len; j++) {
         //        }
         NSMutableArray *stringArray2 = [[NSMutableArray alloc] init];
                     for(int j = 0; j < descriptors.rows; j++)
@@ -809,9 +957,9 @@ NSInteger itr=0;
         } else {
             colorSpace = CGColorSpaceCreateDeviceRGB();
         }
-        
+         
         CGDataProviderRef provider = CGDataProviderCreateWithCFData((__bridge CFDataRef)data);
-        
+         
         // Creating CGImage from cv::Mat
         CGImageRef imageRef = CGImageCreate(cvMat.cols,                                 //width
                                             cvMat.rows,                                 //height
@@ -836,8 +984,15 @@ NSInteger itr=0;
         
         
         
+//        finalImage = [CanvasCamera resizeImage:finalImage toSize:CGSizeMake(width/2, height/2)];
         
         
+        // Convert to Base64 data
+//        NSData *base64Data = [data base64EncodedDataWithOptions:0];
+//        NSString *strData = [NSString stringWithUTF8String:(const char *)[base64Data bytes]];
+//        
+//        [dicRet setObject:strData forKey:@"imageURI"];
+
         
 //        NSData *imageData = UIImageJPEGRepresentation(image2, 0.01);
         NSData *imageData = UIImageJPEGRepresentation(finalImage, 1.0);
@@ -849,7 +1004,7 @@ NSInteger itr=0;
         
         javascript = [NSString stringWithFormat:@"%@%@%@", javascript, encodedString, @"','abc');"];
         
-        javascript = [NSString stringWithFormat:@"%@%@%@%@", javascript, @"CanvasCamera.detect("',str2,'");"];
+        javascript = [NSString stringWithFormat:@"%@%@%@%@", javascript, @"CanvasCamera.detect('",str2,@"');"];
         
         [self.webView performSelectorOnMainThread:@selector(stringByEvaluatingJavaScriptFromString:) withObject:javascript waitUntilDone:YES];
 #else
@@ -879,6 +1034,23 @@ NSInteger itr=0;
                 
                 NSString *javascript = [NSString stringWithFormat:@"%@%@%@", @"CanvasCamera.capture('", imagePath, @"',555);"];
                 javascript = [NSString stringWithFormat:@"%@%@%@%@", javascript, @"CanvasCamera.detect('",str2,@"');"];
+                
+                
+                
+                
+                NSString *encodedString = [imageData base64EncodedStringWithOptions:0];
+                
+                NSString *str3 = @"data:image/jpeg;base64,";
+                
+                str3 = [NSString stringWithFormat:@"%@%@%@", str3, encodedString, @""];
+                
+                
+                [self.webView performSelectorOnMainThread:@selector(stringByEvaluatingJavaScriptFromString:) withObject:javascript waitUntilDone:YES];
+                
+                
+                
+                
+                javascript = [NSString stringWithFormat:@"%@%@%@%@", javascript, @"CanvasCamera.base64('",str3,@"');"];
                 [self.webView stringByEvaluatingJavaScriptFromString:javascript];
             }
         });
