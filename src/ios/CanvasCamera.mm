@@ -401,7 +401,7 @@ typedef enum {
     if (command.arguments.count <= 0)
     {
         bParsed = NO;
-        errMsg = @"Please specify a flash mode";
+        errMsg = @"Please specify a deep mode";
     }
     else
     {

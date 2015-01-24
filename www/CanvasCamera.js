@@ -1,4 +1,4 @@
-               cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module) {
+cordova.define("cordova/plugin/CanvasCamera", function(require, exports, module) {
                               var exec = require('cordova/exec');
                               var CanvasCamera = function(){
                               var _orientation = 'landscape';
